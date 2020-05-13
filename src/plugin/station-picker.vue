@@ -1,7 +1,7 @@
 <template>
     <div class="station-picker">
-        <van-search v-model="searchText" background="#0687FF" placeholder="请输入搜索关键词" show-action @search="onSearch">
-            <div slot="action" @click="onSearch">搜索</div>
+        <van-search v-model="searchText" background="#0687FF" placeholder="请输入厂站名/拼音或首字母查询" show-action @search="onSearch">
+            <div class="station-picker-button" slot="action" @click="onSearch">搜索</div>
         </van-search>
         <van-tabs class="cardTop" type="card" v-model='partitionTabIndex' @change="partitionChanged">
             <van-tab v-for="(partition,partitionIndex) in partitionArray" :key="partitionIndex" :title="partition.name">
@@ -113,9 +113,11 @@
             },
             onSearch() {
                 // 刷新厂站数据列表
-                this.initFlag = false;
-                this.requestParams.search = this.searchText;
-                this.$emit("refreshStations", this.requestParams);
+                if (this.searchText != this.requestParams.search) {
+                    this.initFlag = false;
+                    this.requestParams.search = this.searchText;
+                    this.$emit("refreshStations", this.requestParams);
+                }
             },
             partitionChanged() {
                 // 刷新电压等级、及厂站数据列表
@@ -176,6 +178,10 @@
             accept() {
                 // 选择厂站完成
                 let tabIndex = this.partitionTabIndex;
+                if (this.currentStations[tabIndex].stationsObjs.length <= 0) {
+                    Notify({type: 'primary', message: '请选择厂站！', duration: 1000});
+                    return;
+                }
                 this.$emit("accept", this.currentStations[tabIndex].stationsObjs);
             }
         }
@@ -196,6 +202,19 @@
         }
         .van-search {
             padding: 5px;
+            &__action {
+                &:active {
+                    background-color: #0687FF;
+                }
+            }
+        }
+        &-button {
+            color: #fff;
+            &:active {
+                width: 30px;
+                // font-size: 13px;
+                background-color: #0687FF;
+            }
         }
         .van-tabs__nav--card .van-tab {
             border-right: #0687FF;
@@ -263,7 +282,7 @@
                         width: @maxVanTagWidth;
                         min-width: @maxVanTagWidth;
                         justify-content:center;
-                        color: #666666;//0687FF
+                        color: #0687FF;//666666
                         &--large {
                             overflow: hidden;
                             text-overflow: ellipsis;

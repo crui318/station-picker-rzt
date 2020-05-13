@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import stationPage from '../src/plugin/station-picker';
+import stationPage from './plugin/station-picker';
 export default {
   name: 'app',
   data () {
