@@ -38,6 +38,10 @@
 </template>
 
 <script>
+    // rem转换
+    import '../libs/rem';
+    // 自定义的样式
+    import '../assets/less/index.less';
     import {Notify} from 'vant';
     import stationPicker from "./station-picker-panel";
 
