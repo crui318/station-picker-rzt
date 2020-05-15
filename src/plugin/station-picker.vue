@@ -42,6 +42,10 @@
     import '../libs/rem';
     // 自定义的样式
     import '../assets/less/index.less';
+    // vant样式导入
+    import 'vant/lib/index.css';
+    import 'vant/lib/icon/local.css';
+
     import {Notify} from 'vant';
     import stationPicker from "./station-picker-panel";
 
@@ -193,7 +197,7 @@
 </script>
 
 <style lang="less">
-    @maxVanTagWidth: calc(33.33vw - 50px);
+    @maxVanTagWidth: calc(33.33vw - 52px);
     @stationsViewHeight1: calc(100vh - 185px);
     @stationsViewHeight2: calc(100vh - 215px);
     @stationsViewHeight3: calc(100vh - 245px);

@@ -141,9 +141,9 @@
                     display: inline-block;
                     text-align: center;
                     margin: 0 0 10px 12px;
-                    color: #646465;
+                    color: #0b0f12;//#646465;
                     border-radius: 4px;
-                    border: 1px solid #CDCDCD;
+                    border: 1px solid #d8dde0;//#CDCDCD;
                     overflow: hidden;
                     text-overflow:ellipsis;
                     white-space: nowrap;
@@ -154,7 +154,7 @@
                 span.active {
                     color: #0687FF;
                     background-color: #E9F6FD;
-                    border: 1px solid #CDCDCD;
+                    border: 1px solid #2e86ff;//#CDCDCD;
                 }
             }
         }
