@@ -11,9 +11,7 @@
             </li>
             <li>
                 <label>{{categoryName}}列表</label>
-                <div :class="selectedIDs.length <= 3 ? 'station-picker-panel-list1' :
-                (selectedIDs.length > 6 ? 'station-picker-panel-list3' :
-                'station-picker-panel-list2')">
+                <div :class="`station-picker-panel-list${listStyleIndex}`" ref="scrollListView">
                     <van-list v-model="loading" :finished="finished"
                     finished-text="没有更多数据了" @load="onLoad">
                         <span v-for="(item,index) in list" :key="index"
@@ -46,7 +44,8 @@
                         voltageArray: [
                             {name: "全部", type: ""}
                         ],
-                        stationArray: []
+                        stationArray: [],
+                        moreData: false
                     };
 				}
 			},
@@ -67,6 +66,12 @@
                 default: function () {
                     return [];
                 }
+            },
+            listStyleIndex: {
+                type: Number,
+                default: function () {
+                    return 0;
+                }
             }
 		},
 		watch: {
@@ -74,16 +79,26 @@
 				handler(n, m) {
                     this.resetStationDataArray();
 				},
+                immediate: true,
 				deep: true
 			}
 		},
+        created() {
+        },
         mounted() {
         },
         methods: {
             resetStationDataArray() {
-                this.list = [];
-                this.dataIndex = 0;
-                this.finished = false;
+                if (!this.loading) {
+                    this.list = [];
+                    this.dataIndex = 0;
+                    this.finished = false;
+                    if (undefined != this.$refs.scrollListView &&
+                        undefined != this.$refs.scrollListView.scrollTop) {
+                        this.$refs.scrollListView.scrollTop = 0;
+                    }
+                }
+                this.onLoad();
             },
             voltageChanged(item) {
                 this.$emit("voltageChanged", item);
@@ -92,33 +107,41 @@
                 this.$emit("stationChanged", item);
             },
             onLoad() {
-                // 异步更新数据
-                // setTimeout 仅做示例，真实场景中一般为 ajax 请求
-                setTimeout(() => {
-                    let minI = this.dataIndex;
-                    let tmpI = minI + 32;
-                    let maxL = this.stationsData.stationArray.length;
-                    let maxI = tmpI < maxL ? tmpI : maxL;
-                    for (let i = minI; i < maxI; ++i) {
-                        this.list.push(this.stationsData.stationArray[i]);
-                    }
-                    // 加载状态结束
-                    this.loading = false;
-                    this.dataIndex = maxI;
-                    // 数据全部加载完成
-                    if (this.list.length >= maxL) {
+                // 更新数据
+                let minI = this.dataIndex;
+                let tmpI = minI + 32;
+                let maxL = this.stationsData.stationArray.length;
+                let maxI = tmpI < maxL ? tmpI : maxL;
+                for (let i = minI; i < maxI; ++i) {
+                    this.list.push(this.stationsData.stationArray[i]);
+                }
+                // 加载状态结束
+                this.loading = false;
+                this.dataIndex = maxI;
+                // 数据全部加载完成
+                if (this.list.length >= maxL) {
+                    if (!this.stationsData.moreData) {
                         this.finished = true;
                     }
-                }, 1000);
+                    else {
+                        this.loading = true;
+                        this.$emit("loadingMoreData");
+                    }
+                }
             }
         }
     }
 </script>
 
 <style lang="less">
-    @stationsSubViewHeight1: calc(100vh - 385px);
-    @stationsSubViewHeight2: calc(100vh - 415px);
-    @stationsSubViewHeight3: calc(100vh - 445px);
+    @stationsSubViewHeight1: calc(100vh - 390px);
+    @stationsSubViewHeight2: calc(100vh - 420px);
+    @stationsSubViewHeight3: calc(100vh - 450px);
+    @stationsSubViewHeight4: calc(100vh - 480px);
+    @stationsSubViewHeight5: calc(100vh - 510px);
+    @stationsSubViewHeight6: calc(100vh - 540px);
+    @stationsSubViewHeight7: calc(100vh - 570px);
+    @stationsSubViewHeight8: calc(100vh - 600px);
     .station-picker-panel {
         ul {
             width: 100%;
@@ -142,7 +165,7 @@
                     text-align: center;
                     margin: 0 0 10px 12px;
                     color: #0b0f12;//#646465;
-                    border-radius: 4px;
+                    border-radius: 3px;
                     border: 1px solid #d8dde0;//#CDCDCD;
                     overflow: hidden;
                     text-overflow:ellipsis;
@@ -158,6 +181,10 @@
                 }
             }
         }
+        &-list0 {
+            height: @stationsSubViewHeight1;
+            overflow-y: auto;
+        }
         &-list1 {
             height: @stationsSubViewHeight1;
             overflow-y: auto;
@@ -168,6 +195,26 @@
         }
         &-list3 {
             height: @stationsSubViewHeight3;
+            overflow-y: auto;
+        }
+        &-list4 {
+            height: @stationsSubViewHeight4;
+            overflow-y: auto;
+        }
+        &-list5 {
+            height: @stationsSubViewHeight5;
+            overflow-y: auto;
+        }
+        &-list6 {
+            height: @stationsSubViewHeight6;
+            overflow-y: auto;
+        }
+        &-list7 {
+            height: @stationsSubViewHeight7;
+            overflow-y: auto;
+        }
+        &-list8 {
+            height: @stationsSubViewHeight8;
             overflow-y: auto;
         }
     }

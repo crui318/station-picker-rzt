@@ -7,25 +7,25 @@
             <van-tab v-for="(partition,partitionIndex) in partitionArray" :key="partitionIndex" :title="partition.name">
                 <div class="station-picker-label">
                     <label>{{currentStations[partitionIndex].stationsObjs.length > 0 ? "已选择" : "请选择"}}：</label>
-                    <div class="station-picker-label-box">
+                    <div class="station-picker-label-box" :id="`labelBoxView${partitionIndex}`">
                         <div v-for="(station,stationIndex) in currentStations[partitionIndex].stationsObjs" :key="stationIndex">
                             <van-tag plain closeable type="primary" size="large"
                             @close="deleteStation(station)">{{station.NAME}}</van-tag>
                         </div>
                     </div>
                 </div>
-                <van-tabs :class="currentStations[partitionIndex].stationsObjs.length <= 3 ?
-                'station-picker-list1' : (currentStations[partitionIndex].stationsObjs.length > 6 ?
-                    'station-picker-list3' : 'station-picker-list2')"
+                <van-tabs :class="`station-picker-list${currentStations[partitionIndex].listStyleIndex}`"
                     v-model='currentStations[partitionIndex].categoryIndex' @change="categoryChanged">
                     <van-tab v-for="(category,categoryIndex) in categoryArray" :key="categoryIndex" :title='category.name'>
-                        <stationPicker ref="areaStationPicker"
+                        <stationPicker
                         :selectedIDs="currentStations[partitionIndex].stationIDs"
                         :categoryName="categoryArray[currentStations[partitionIndex].categoryIndex].name"
                         :voltageType="currentStations[partitionIndex].voltageType"
-                        :stationsData="0 == partitionIndex ? stationsData.regionData : stationsData.ownerData"
+                        :stationsData="stationCacheData[partitionIndex][categoryIndex]"
+                        :listStyleIndex="currentStations[partitionIndex].listStyleIndex"
                         @voltageChanged="voltageChanged"
-                        @stationChanged="stationChanged"/>
+                        @stationChanged="stationChanged"
+                        @loadingMoreData="loadingMoreData"/>
                     </van-tab>
                 </van-tabs>
             </van-tab>
@@ -57,8 +57,10 @@
         data() {
             return {
                 initFlag: false,
+                resetFlag: true,
                 searchText: "",
                 partitionTabIndex: 0,
+                lastCategoryIndex: 0,
                 partitionArray: [
                     {name: "行政区域", type: "region"},
                     {name: "电网", type: "owner"}
@@ -69,14 +71,65 @@
                     {name: "用户变", type: "yhb"},
                     {name: "换流站", type: "hlz"}
                 ],
+                stationCacheData: [[{
+                    voltageArray: [
+                        {name: "全部", type: ""}
+                    ],
+                    stationArray: [],
+                    moreData: false
+                }, {
+                    voltageArray: [
+                        {name: "全部", type: ""}
+                    ],
+                    stationArray: [],
+                    moreData: false
+                }, {
+                    voltageArray: [
+                        {name: "全部", type: ""}
+                    ],
+                    stationArray: [],
+                    moreData: false
+                }, {
+                    voltageArray: [
+                        {name: "全部", type: ""}
+                    ],
+                    stationArray: [],
+                    moreData: false
+                }], [{
+                    voltageArray: [
+                        {name: "全部", type: ""}
+                    ],
+                    stationArray: [],
+                    moreData: false
+                }, {
+                    voltageArray: [
+                        {name: "全部", type: ""}
+                    ],
+                    stationArray: [],
+                    moreData: false
+                }, {
+                    voltageArray: [
+                        {name: "全部", type: ""}
+                    ],
+                    stationArray: [],
+                    moreData: false
+                }, {
+                    voltageArray: [
+                        {name: "全部", type: ""}
+                    ],
+                    stationArray: [],
+                    moreData: false
+                }]],
                 currentStations: [
                     {
+                        listStyleIndex: 0,
                         categoryIndex: 0,
                         voltageType: "",
                         stationIDs: [],
                         stationsObjs: []
                     },
                     {
+                        listStyleIndex: 0,
                         categoryIndex: 0,
                         voltageType: "",
                         stationIDs: [],
@@ -100,22 +153,74 @@
                             voltageArray: [
                                 {name: "全部", type: ""}
                             ],
-                            stationArray: []
+                            stationArray: [],
+                            moreData: false
                         },
                         ownerData: {
                             voltageArray: [
                                 {name: "全部", type: ""}
                             ],
-                            stationArray: []
+                            stationArray: [],
+                            moreData: false
                         }
                     };
                 }
             }
         },
+		watch: {
+			stationsData: {
+				handler(n, m) {
+                    let index = this.partitionTabIndex;
+                    let subIndex = this.currentStations[index].categoryIndex;
+                    this.stationCacheData[index][subIndex] = (0 == index) ?
+                    this.stationsData.regionData : this.stationsData.ownerData;
+				},
+                immediate: true,
+				deep: true
+			},
+            regionSelectedsLength: function() {
+                this.$nextTick(function() {
+                    this.refreshListStyle(0);
+                });
+            },
+            ownerSelectedsLength: function() {
+                this.$nextTick(function() {
+                    this.refreshListStyle(1);
+                });
+            }
+		},
+        computed: {
+            regionSelectedsLength: function() {
+                return this.currentStations[0].stationsObjs.length;
+            },
+            ownerSelectedsLength: function() {
+                return this.currentStations[1].stationsObjs.length;
+            }
+        },
         mounted() {
-            this.$emit("refreshVoltageAndStations", this.requestParams);
+            this.$nextTick(function () {
+                this.$emit("refreshVoltageAndStations", this.requestParams);
+            });
         },
         methods: {
+            resetCacheData(index, subIndex) {
+                this.stationCacheData[index][subIndex] = {
+                    voltageArray: [
+                        {name: "全部", type: ""}
+                    ],
+                    stationArray: []
+                };
+            },
+            refreshListStyle(index) {
+                let label = document.getElementById(`labelBoxView${index}`);
+                if (undefined != label) {
+                    this.currentStations[index].listStyleIndex = Math.floor(label.offsetHeight / 30);
+                    // let labelStyle = window.getComputedStyle(label);
+                    // if (undefined != labelStyle) {
+                    //     labelStyle.height
+                    // }
+                }
+            },
             deleteStation(item) {
                 this.stationChanged(item);
             },
@@ -133,6 +238,7 @@
                 this.requestParams.partition = this.partitionArray[tabIndex].type;
                 // 刷新对应类型参数
                 let subTabIndex = this.currentStations[tabIndex].categoryIndex;
+                this.lastCategoryIndex = subTabIndex;
                 this.requestParams.category = this.categoryArray[subTabIndex].type;
                 // 电压等级初始化全部
                 // this.currentStations[tabIndex].voltageType = "";
@@ -147,10 +253,13 @@
                 // 刷新电压等级、及厂站数据列表
                 let tabIndex = this.partitionTabIndex;
                 let subTabIndex = this.currentStations[tabIndex].categoryIndex;
+                let lastSubTabIndex = this.lastCategoryIndex;
+                this.lastCategoryIndex = subTabIndex;
                 this.requestParams.category = this.categoryArray[subTabIndex].type;
                 // 电压等级初始化全部
                 this.currentStations[tabIndex].voltageType = "";
                 this.requestParams.voltage = "";
+                this.resetCacheData(tabIndex, lastSubTabIndex);
                 this.$emit("refreshVoltageAndStations", this.requestParams);
             },
             voltageChanged(item) {
@@ -173,12 +282,16 @@
                 }
                 else {
                     if (idLength >= 8) {
+                        Notify.clear();
                         Notify({type: 'danger', message: '最多选择8个厂站！'});
                         return;
                     }
                     this.currentStations[tabIndex].stationIDs.push(item.ID);
                     this.currentStations[tabIndex].stationsObjs.push(item);
                 }
+            },
+            loadingMoreData() {
+                this.$emit("loadingMoreData", this.requestParams);
             },
             cancel() {
                 this.$emit("cancel");
@@ -187,6 +300,7 @@
                 // 选择厂站完成
                 let tabIndex = this.partitionTabIndex;
                 if (this.currentStations[tabIndex].stationsObjs.length <= 0) {
+                    Notify.clear();
                     Notify({type: 'primary', message: '请选择厂站！', duration: 1000});
                     return;
                 }
@@ -197,10 +311,16 @@
 </script>
 
 <style lang="less">
-    @maxVanTagWidth: calc(33.33vw - 52px);
+    @maxVanTagWidth: calc(100vw - 110px);
+    @minVanTagWidth: calc(33.33vw - 52px);
     @stationsViewHeight1: calc(100vh - 185px);
     @stationsViewHeight2: calc(100vh - 215px);
     @stationsViewHeight3: calc(100vh - 245px);
+    @stationsViewHeight4: calc(100vh - 275px);
+    @stationsViewHeight5: calc(100vh - 305px);
+    @stationsViewHeight6: calc(100vh - 335px);
+    @stationsViewHeight7: calc(100vh - 365px);
+    @stationsViewHeight8: calc(100vh - 395px);
     .station-picker {
         width: 100%;
         // height: 100%;
@@ -287,30 +407,51 @@
                     font-size: 13px;
                     .van-tag {
                         width: auto!important;
-                        width: @maxVanTagWidth;
-                        min-width: @maxVanTagWidth;
-                        justify-content:center;
+                        width: @minVanTagWidth;
+                        min-width: @minVanTagWidth;
+                        max-width: @maxVanTagWidth;
+                        justify-content: center;
                         color: #0687FF;//666666
                         &--large {
+                            // display: block;
                             overflow: hidden;
                             text-overflow: ellipsis;
                             white-space: nowrap;
+                            // text-align: center;
+                        }
+                        &__close {
+                            // vertical-align: middle;
                         }
                     }
                 }
             }
         }
+        &-list0 {
+            height: @stationsViewHeight1;
+        }
         &-list1 {
             height: @stationsViewHeight1;
-            // overflow-y: auto;
         }
         &-list2 {
             height: @stationsViewHeight2;
-            // overflow-y: auto;
         }
         &-list3 {
             height: @stationsViewHeight3;
-            // overflow-y: auto;
+        }
+        &-list4 {
+            height: @stationsViewHeight4;
+        }
+        &-list5 {
+            height: @stationsViewHeight5;
+        }
+        &-list6 {
+            height: @stationsViewHeight6;
+        }
+        &-list7 {
+            height: @stationsViewHeight7;
+        }
+        &-list8 {
+            height: @stationsViewHeight8;
         }
         .bottom {
             width: 100%;
