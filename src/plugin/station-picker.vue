@@ -135,14 +135,14 @@
                     {
                         listStyleIndex: 0,
                         categoryIndex: 0,
-                        voltageType: "",
+                        voltageType: "all",
                         stationIDs: [],
                         stationsObjs: []
                     },
                     {
                         listStyleIndex: 0,
                         categoryIndex: 0,
-                        voltageType: "",
+                        voltageType: "all",
                         stationIDs: [],
                         stationsObjs: []
                     }
