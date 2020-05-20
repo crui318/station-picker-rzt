@@ -151,7 +151,7 @@
                     search: "",
                     partition: "region",
                     category: "all",
-                    voltage: ""
+                    voltage: "all"
                 }
             };
         },
@@ -258,8 +258,8 @@
                 this.lastCategoryIndex = subTabIndex;
                 this.requestParams.category = this.categoryArray[subTabIndex].type;
                 // 电压等级初始化全部
-                this.currentStations[tabIndex].voltageType = "";
-                this.requestParams.voltage = "";
+                this.currentStations[tabIndex].voltageType = "all";
+                this.requestParams.voltage = "all";
                 this.resetCacheData(tabIndex, lastSubTabIndex);
                 this.$emit("refreshVoltageAndStations", this.requestParams);
             },
