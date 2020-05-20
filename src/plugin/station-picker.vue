@@ -15,7 +15,7 @@
                     </div>
                 </div>
                 <van-tabs :class="`station-picker-list${currentStations[partitionIndex].listStyleIndex}`"
-                    v-model='currentStations[partitionIndex].categoryIndex' @change="categoryChanged">
+                    v-model='currentStations[partitionIndex].categoryIndex' @change="categoryChanged" :swipe-threshold="categoryArray.length">
                     <van-tab v-for="(category,categoryIndex) in categoryArray" :key="categoryIndex" :title='category.name'>
                         <stationPicker
                         :selectedIDs="currentStations[partitionIndex].stationIDs"
@@ -56,16 +56,15 @@
         },
         data() {
             return {
-                initFlag: false,
-                resetFlag: true,
                 searchText: "",
                 partitionTabIndex: 0,
                 lastCategoryIndex: 0,
                 partitionArray: [
                     {name: "行政区域", type: "region"},
-                    {name: "电网", type: "owner"}
+                    {name: "电网", type: "pwgrid"}
                 ],
                 categoryArray: [
+                    {name: "全部", type: "all"},
                     {name: "变电站", type: "substation"},
                     {name: "电厂", type: "plant"},
                     {name: "用户变", type: "yhb"},
@@ -73,49 +72,61 @@
                 ],
                 stationCacheData: [[{
                     voltageArray: [
-                        {name: "全部", type: ""}
+                        {name: "全部", type: "all"}
                     ],
                     stationArray: [],
                     moreData: false
                 }, {
                     voltageArray: [
-                        {name: "全部", type: ""}
+                        {name: "全部", type: "all"}
                     ],
                     stationArray: [],
                     moreData: false
                 }, {
                     voltageArray: [
-                        {name: "全部", type: ""}
+                        {name: "全部", type: "all"}
                     ],
                     stationArray: [],
                     moreData: false
                 }, {
                     voltageArray: [
-                        {name: "全部", type: ""}
+                        {name: "全部", type: "all"}
+                    ],
+                    stationArray: [],
+                    moreData: false
+                }, {
+                    voltageArray: [
+                        {name: "全部", type: "all"}
                     ],
                     stationArray: [],
                     moreData: false
                 }], [{
                     voltageArray: [
-                        {name: "全部", type: ""}
+                        {name: "全部", type: "all"}
                     ],
                     stationArray: [],
                     moreData: false
                 }, {
                     voltageArray: [
-                        {name: "全部", type: ""}
+                        {name: "全部", type: "all"}
                     ],
                     stationArray: [],
                     moreData: false
                 }, {
                     voltageArray: [
-                        {name: "全部", type: ""}
+                        {name: "全部", type: "all"}
                     ],
                     stationArray: [],
                     moreData: false
                 }, {
                     voltageArray: [
-                        {name: "全部", type: ""}
+                        {name: "全部", type: "all"}
+                    ],
+                    stationArray: [],
+                    moreData: false
+                }, {
+                    voltageArray: [
+                        {name: "全部", type: "all"}
                     ],
                     stationArray: [],
                     moreData: false
@@ -139,7 +150,7 @@
                 requestParams: {
                     search: "",
                     partition: "region",
-                    category: "substation",
+                    category: "all",
                     voltage: ""
                 }
             };
@@ -149,20 +160,11 @@
 				type: Object,
 				default: () => {
 					return {
-                        regionData: {
-                            voltageArray: [
-                                {name: "全部", type: ""}
-                            ],
-                            stationArray: [],
-                            moreData: false
-                        },
-                        ownerData: {
-                            voltageArray: [
-                                {name: "全部", type: ""}
-                            ],
-                            stationArray: [],
-                            moreData: false
-                        }
+                        voltageArray: [
+                            {name: "全部", type: "all"}
+                        ],
+                        stationArray: [],
+                        moreData: false
                     };
                 }
             }
@@ -172,8 +174,7 @@
 				handler(n, m) {
                     let index = this.partitionTabIndex;
                     let subIndex = this.currentStations[index].categoryIndex;
-                    this.stationCacheData[index][subIndex] = (0 == index) ?
-                    this.stationsData.regionData : this.stationsData.ownerData;
+                    this.stationCacheData[index][subIndex] = this.stationsData;
 				},
                 immediate: true,
 				deep: true
@@ -206,9 +207,10 @@
             resetCacheData(index, subIndex) {
                 this.stationCacheData[index][subIndex] = {
                     voltageArray: [
-                        {name: "全部", type: ""}
+                        {name: "全部", type: "all"}
                     ],
-                    stationArray: []
+                    stationArray: [],
+                    moreData: false
                 };
             },
             refreshListStyle(index) {
@@ -227,7 +229,6 @@
             onSearch() {
                 // 刷新厂站数据列表
                 if (this.searchText != this.requestParams.search) {
-                    this.initFlag = false;
                     this.requestParams.search = this.searchText;
                     this.$emit("refreshStations", this.requestParams);
                 }
@@ -235,19 +236,19 @@
             partitionChanged() {
                 // 刷新电压等级、及厂站数据列表
                 let tabIndex = this.partitionTabIndex;
+                let lastTabIndex = (0 == tabIndex) ? 1 : 0;
                 this.requestParams.partition = this.partitionArray[tabIndex].type;
                 // 刷新对应类型参数
                 let subTabIndex = this.currentStations[tabIndex].categoryIndex;
+                let lastSubTabIndex = this.currentStations[lastTabIndex].categoryIndex;
                 this.lastCategoryIndex = subTabIndex;
                 this.requestParams.category = this.categoryArray[subTabIndex].type;
                 // 电压等级初始化全部
                 // this.currentStations[tabIndex].voltageType = "";
                 // this.requestParams.voltage = "";
                 this.requestParams.voltage = this.currentStations[tabIndex].voltageType;
-                if (!this.initFlag) {
-                    this.initFlag = true;
-                    this.$emit("refreshVoltageAndStations", this.requestParams);
-                }
+                this.resetCacheData(lastTabIndex, lastSubTabIndex);
+                this.$emit("refreshVoltageAndStations", this.requestParams);
             },
             categoryChanged() {
                 // 刷新电压等级、及厂站数据列表

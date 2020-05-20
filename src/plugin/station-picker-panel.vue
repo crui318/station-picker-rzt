@@ -11,7 +11,7 @@
             </li>
             <li>
                 <label>{{categoryName}}列表</label>
-                <div :class="`station-picker-panel-list${listStyleIndex}`" ref="scrollListView">
+                <div :class="`station-picker-panel-list${voltageRow}${listStyleIndex}`" ref="scrollListView">
                     <van-list v-model="loading" :finished="finished"
                     finished-text="没有更多数据了" @load="onLoad">
                         <span v-for="(item,index) in list" :key="index"
@@ -83,6 +83,13 @@
 				deep: true
 			}
 		},
+        computed: {
+            voltageRow: function() {
+                let length = this.stationsData.voltageArray.length;
+                let row = length > 0 ? Math.floor((length - 1) / 4) : 0;
+                return row + 1;
+            }
+        },
         created() {
         },
         mounted() {
@@ -109,7 +116,7 @@
             onLoad() {
                 // 更新数据
                 let minI = this.dataIndex;
-                let tmpI = minI + 32;
+                let tmpI = minI + 40;
                 let maxL = this.stationsData.stationArray.length;
                 let maxI = tmpI < maxL ? tmpI : maxL;
                 for (let i = minI; i < maxI; ++i) {
@@ -134,14 +141,30 @@
 </script>
 
 <style lang="less">
-    @stationsSubViewHeight1: calc(100vh - 390px);
-    @stationsSubViewHeight2: calc(100vh - 420px);
-    @stationsSubViewHeight3: calc(100vh - 450px);
-    @stationsSubViewHeight4: calc(100vh - 480px);
-    @stationsSubViewHeight5: calc(100vh - 510px);
-    @stationsSubViewHeight6: calc(100vh - 540px);
-    @stationsSubViewHeight7: calc(100vh - 570px);
-    @stationsSubViewHeight8: calc(100vh - 600px);
+    @stationsSubViewHeight11: calc(100vh - 350px);
+    @stationsSubViewHeight12: calc(100vh - 380px);
+    @stationsSubViewHeight13: calc(100vh - 410px);
+    @stationsSubViewHeight14: calc(100vh - 440px);
+    @stationsSubViewHeight15: calc(100vh - 470px);
+    @stationsSubViewHeight16: calc(100vh - 500px);
+    @stationsSubViewHeight17: calc(100vh - 530px);
+    @stationsSubViewHeight18: calc(100vh - 560px);
+    @stationsSubViewHeight21: calc(100vh - 390px);
+    @stationsSubViewHeight22: calc(100vh - 420px);
+    @stationsSubViewHeight23: calc(100vh - 450px);
+    @stationsSubViewHeight24: calc(100vh - 480px);
+    @stationsSubViewHeight25: calc(100vh - 510px);
+    @stationsSubViewHeight26: calc(100vh - 540px);
+    @stationsSubViewHeight27: calc(100vh - 570px);
+    @stationsSubViewHeight28: calc(100vh - 600px);
+    @stationsSubViewHeight31: calc(100vh - 430px);
+    @stationsSubViewHeight32: calc(100vh - 460px);
+    @stationsSubViewHeight33: calc(100vh - 490px);
+    @stationsSubViewHeight34: calc(100vh - 520px);
+    @stationsSubViewHeight35: calc(100vh - 550px);
+    @stationsSubViewHeight36: calc(100vh - 580px);
+    @stationsSubViewHeight37: calc(100vh - 610px);
+    @stationsSubViewHeight38: calc(100vh - 640px);
     .station-picker-panel {
         ul {
             width: 100%;
@@ -181,40 +204,112 @@
                 }
             }
         }
-        &-list0 {
-            height: @stationsSubViewHeight1;
+        &-list10 {
+            height: @stationsSubViewHeight11;
             overflow-y: auto;
         }
-        &-list1 {
-            height: @stationsSubViewHeight1;
+        &-list11 {
+            height: @stationsSubViewHeight11;
             overflow-y: auto;
         }
-        &-list2 {
-            height: @stationsSubViewHeight2;
+        &-list12 {
+            height: @stationsSubViewHeight12;
             overflow-y: auto;
         }
-        &-list3 {
-            height: @stationsSubViewHeight3;
+        &-list13 {
+            height: @stationsSubViewHeight13;
             overflow-y: auto;
         }
-        &-list4 {
-            height: @stationsSubViewHeight4;
+        &-list14 {
+            height: @stationsSubViewHeight14;
             overflow-y: auto;
         }
-        &-list5 {
-            height: @stationsSubViewHeight5;
+        &-list15 {
+            height: @stationsSubViewHeight15;
             overflow-y: auto;
         }
-        &-list6 {
-            height: @stationsSubViewHeight6;
+        &-list16 {
+            height: @stationsSubViewHeight16;
             overflow-y: auto;
         }
-        &-list7 {
-            height: @stationsSubViewHeight7;
+        &-list17 {
+            height: @stationsSubViewHeight17;
             overflow-y: auto;
         }
-        &-list8 {
-            height: @stationsSubViewHeight8;
+        &-list18 {
+            height: @stationsSubViewHeight18;
+            overflow-y: auto;
+        }
+        &-list20 {
+            height: @stationsSubViewHeight21;
+            overflow-y: auto;
+        }
+        &-list21 {
+            height: @stationsSubViewHeight21;
+            overflow-y: auto;
+        }
+        &-list22 {
+            height: @stationsSubViewHeight22;
+            overflow-y: auto;
+        }
+        &-list23 {
+            height: @stationsSubViewHeight23;
+            overflow-y: auto;
+        }
+        &-list24 {
+            height: @stationsSubViewHeight24;
+            overflow-y: auto;
+        }
+        &-list25 {
+            height: @stationsSubViewHeight25;
+            overflow-y: auto;
+        }
+        &-list26 {
+            height: @stationsSubViewHeight26;
+            overflow-y: auto;
+        }
+        &-list27 {
+            height: @stationsSubViewHeight27;
+            overflow-y: auto;
+        }
+        &-list28 {
+            height: @stationsSubViewHeight28;
+            overflow-y: auto;
+        }
+        &-list30 {
+            height: @stationsSubViewHeight31;
+            overflow-y: auto;
+        }
+        &-list31 {
+            height: @stationsSubViewHeight31;
+            overflow-y: auto;
+        }
+        &-list32 {
+            height: @stationsSubViewHeight32;
+            overflow-y: auto;
+        }
+        &-list33 {
+            height: @stationsSubViewHeight33;
+            overflow-y: auto;
+        }
+        &-list34 {
+            height: @stationsSubViewHeight34;
+            overflow-y: auto;
+        }
+        &-list35 {
+            height: @stationsSubViewHeight35;
+            overflow-y: auto;
+        }
+        &-list36 {
+            height: @stationsSubViewHeight36;
+            overflow-y: auto;
+        }
+        &-list37 {
+            height: @stationsSubViewHeight37;
+            overflow-y: auto;
+        }
+        &-list38 {
+            height: @stationsSubViewHeight38;
             overflow-y: auto;
         }
     }
