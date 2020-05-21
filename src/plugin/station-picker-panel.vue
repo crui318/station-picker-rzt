@@ -45,7 +45,7 @@
                             {name: "全部", type: ""}
                         ],
                         stationArray: [],
-                        moreData: false
+                        moreData: true
                     };
 				}
 			},
@@ -96,14 +96,14 @@
         },
         methods: {
             resetStationDataArray() {
-                if (!this.loading) {
+                if (undefined != this.$refs.scrollListView &&
+                    undefined != this.$refs.scrollListView.scrollTop) {
+                    this.$refs.scrollListView.scrollTop = 0;
+                }
+                if (!this.loading || this.stationsData.stationArray.length <= 0) {
                     this.list = [];
                     this.dataIndex = 0;
                     this.finished = false;
-                    if (undefined != this.$refs.scrollListView &&
-                        undefined != this.$refs.scrollListView.scrollTop) {
-                        this.$refs.scrollListView.scrollTop = 0;
-                    }
                 }
                 this.onLoad();
             },
@@ -130,7 +130,7 @@
                     if (!this.stationsData.moreData) {
                         this.finished = true;
                     }
-                    else {
+                    else if (maxL > 0) {
                         this.loading = true;
                         this.$emit("loadingMoreData");
                     }

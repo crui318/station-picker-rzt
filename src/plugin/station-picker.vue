@@ -75,61 +75,61 @@
                         {name: "全部", type: "all"}
                     ],
                     stationArray: [],
-                    moreData: false
+                    moreData: true
                 }, {
                     voltageArray: [
                         {name: "全部", type: "all"}
                     ],
                     stationArray: [],
-                    moreData: false
+                    moreData: true
                 }, {
                     voltageArray: [
                         {name: "全部", type: "all"}
                     ],
                     stationArray: [],
-                    moreData: false
+                    moreData: true
                 }, {
                     voltageArray: [
                         {name: "全部", type: "all"}
                     ],
                     stationArray: [],
-                    moreData: false
+                    moreData: true
                 }, {
                     voltageArray: [
                         {name: "全部", type: "all"}
                     ],
                     stationArray: [],
-                    moreData: false
+                    moreData: true
                 }], [{
                     voltageArray: [
                         {name: "全部", type: "all"}
                     ],
                     stationArray: [],
-                    moreData: false
+                    moreData: true
                 }, {
                     voltageArray: [
                         {name: "全部", type: "all"}
                     ],
                     stationArray: [],
-                    moreData: false
+                    moreData: true
                 }, {
                     voltageArray: [
                         {name: "全部", type: "all"}
                     ],
                     stationArray: [],
-                    moreData: false
+                    moreData: true
                 }, {
                     voltageArray: [
                         {name: "全部", type: "all"}
                     ],
                     stationArray: [],
-                    moreData: false
+                    moreData: true
                 }, {
                     voltageArray: [
                         {name: "全部", type: "all"}
                     ],
                     stationArray: [],
-                    moreData: false
+                    moreData: true
                 }]],
                 currentStations: [
                     {
@@ -164,7 +164,7 @@
                             {name: "全部", type: "all"}
                         ],
                         stationArray: [],
-                        moreData: false
+                        moreData: true
                     };
                 }
             }
@@ -210,7 +210,7 @@
                         {name: "全部", type: "all"}
                     ],
                     stationArray: [],
-                    moreData: false
+                    moreData: true
                 };
             },
             refreshListStyle(index) {

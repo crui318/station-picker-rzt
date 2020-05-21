@@ -1,7 +1,7 @@
 {
   "name": "station-picker-rzt",
   "description": "A Vue.js project",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "author": "lichangrui <lichangrui@rongzhitong.com>",
   "license": "MIT",
   "private": false,
