@@ -96,14 +96,14 @@
         },
         methods: {
             resetStationDataArray() {
-                if (undefined != this.$refs.scrollListView &&
-                    undefined != this.$refs.scrollListView.scrollTop) {
-                    this.$refs.scrollListView.scrollTop = 0;
-                }
                 if (!this.loading || this.stationsData.stationArray.length <= 0) {
                     this.list = [];
                     this.dataIndex = 0;
                     this.finished = false;
+                    if (undefined != this.$refs.scrollListView &&
+                        undefined != this.$refs.scrollListView.scrollTop) {
+                        this.$refs.scrollListView.scrollTop = 0;
+                    }
                 }
                 this.onLoad();
             },
